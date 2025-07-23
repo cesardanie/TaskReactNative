@@ -1,22 +1,15 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, FlatList, Image } from 'react-native';
-import axios from 'axios';
-
-interface Elemento {
-  id: string;
-  name: string;
-  avatar: string;
-}
+import { fetchElements, Elemento } from '../services/elementService';
 
 export default function ListadoScreen() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Elemento[]>([]);
 
   useEffect(() => {
-    axios
-      .get('https://6172cfe5110a740017222e2b.mockapi.io/elements')
-      .then((res) => setData(res.data))
-      .catch((err) => console.error(err))
+    fetchElements()
+      .then(setData)
+      .catch((err) => console.error('Error al obtener elementos:', err))
       .finally(() => setLoading(false));
   }, []);
 

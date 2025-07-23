@@ -27,7 +27,7 @@ describe('tasksSlice', () => {
         { id: '1', description: 'Tarea 1' },
         { id: '2', description: 'Tarea 2' },
       ] as Task[],
-      isLoading: false, // Añadido
+      isLoading: false, 
     };
 
 
