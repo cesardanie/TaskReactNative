@@ -1,8 +1,18 @@
-import { View, Text, FlatList, Button, Modal, TextInput, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Modal,
+  TextInput,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { addTask, removeTask, startLoading, finishLoading } from '../redux/tasksSlice';
 import { useEffect, useState } from 'react';
+import { styles } from '../styles/TasksScreen.styles';
 
 export default function TasksScreen() {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
@@ -12,14 +22,10 @@ export default function TasksScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [newTask, setNewTask] = useState('');
 
-  // Simula carga de tareas al montar el componente
   useEffect(() => {
     const fetchTasks = async () => {
       dispatch(startLoading());
-
-      // Simulamos una carga real de datos desde API, etc.
       await new Promise((resolve) => setTimeout(resolve, 1500));
-
       dispatch(finishLoading());
     };
 
@@ -43,51 +49,48 @@ export default function TasksScreen() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#007bff" />
-        <Text style={{ marginTop: 10 }}>Cargando tareas...</Text>
+        <Text style={styles.loadingText}>Cargando tareas...</Text>
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
+    <View style={styles.container}>
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: 10,
-              backgroundColor: '#f0f0f0',
-              borderRadius: 8,
-              marginBottom: 10,
-            }}
-          >
-            <Text style={{ flex: 1 }}>{item.description}</Text>
-            <Button title="❌" color="red" onPress={() => handleRemoveTask(item.id)} />
+          <View style={styles.taskItem}>
+            <Text style={styles.taskText}>{item.description}</Text>
+            <TouchableOpacity onPress={() => handleRemoveTask(item.id)} style={styles.removeButton}>
+              <Text style={styles.removeButtonText}>✕</Text>
+            </TouchableOpacity>
           </View>
         )}
       />
 
-      <Button title="Agregar nuevo Task" onPress={() => setModalVisible(true)} />
+      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+        <Text style={styles.addButtonText}>＋ Nueva Tarea</Text>
+      </TouchableOpacity>
 
       <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={{ flex: 1, backgroundColor: '#000000aa', justifyContent: 'center', padding: 20 }}>
-          <View style={{ backgroundColor: '#fff', borderRadius: 10, padding: 20 }}>
-            <Text>Descripción del Task:</Text>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Nueva Tarea</Text>
             <TextInput
               value={newTask}
               onChangeText={setNewTask}
               placeholder="Escribe algo..."
-              style={{ borderWidth: 1, borderColor: '#ccc', padding: 10, marginVertical: 10 }}
+              style={styles.input}
             />
-            <Button title="Guardar" onPress={handleAddTask} />
-            <View style={{ height: 10 }} />
-            <Button title="Cancelar" color="gray" onPress={() => setModalVisible(false)} />
+            <TouchableOpacity style={styles.saveButton} onPress={handleAddTask}>
+              <Text style={styles.saveButtonText}>Guardar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.cancelText}>Cancelar</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
