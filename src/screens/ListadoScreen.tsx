@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, FlatList, Image } from 'react-native';
-import { fetchElements, Elemento } from '../services/elementService';
+import { fetchElements } from '../services/elementService';
+import { Elemento } from '../types/elementTypes';
 
 export default function ListadoScreen() {
   const [loading, setLoading] = useState(true);

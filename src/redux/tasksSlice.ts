@@ -1,14 +1,7 @@
+// src/redux/tasksSlice.ts
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface Task {
-  id: string;
-  description: string;
-}
-
-interface TasksState {
-  tasks: Task[];
-  isLoading: boolean;
-}
+import { Task, TasksState } from '../types/tasksTypes';
 
 const initialState: TasksState = {
   tasks: [],
