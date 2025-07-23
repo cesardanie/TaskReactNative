@@ -1,7 +1,7 @@
 import tasksReducer, { addTask, removeTask, Task } from './tasksSlice';
 
 describe('tasksSlice', () => {
-  const initialState = { tasks: [] as Task[] };
+  const initialState = { tasks: [] as Task[], isLoading: false };
 
   it('debería retornar el estado inicial al pasar una acción desconocida', () => {
     const nextState = tasksReducer(undefined, { type: 'unknown' });
@@ -13,7 +13,7 @@ describe('tasksSlice', () => {
     const action = addTask(description);
     const nextState = tasksReducer(initialState, action);
 
-   
+
     expect(nextState.tasks).toHaveLength(1);
     expect(nextState.tasks[0].description).toBe(description);
     expect(typeof nextState.tasks[0].id).toBe('string');
@@ -27,7 +27,9 @@ describe('tasksSlice', () => {
         { id: '1', description: 'Tarea 1' },
         { id: '2', description: 'Tarea 2' },
       ] as Task[],
+      isLoading: false, // Añadido
     };
+
 
     // Elimina la de id '1'
     const nextState = tasksReducer(stateWithTasks, removeTask('1'));
