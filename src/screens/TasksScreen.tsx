@@ -1,20 +1,37 @@
-import { View, Text, FlatList, Button, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, FlatList, Button, Modal, TextInput, Alert, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { addTask, removeTask } from '../redux/tasksSlice';
-import { useState } from 'react';
+import { addTask, removeTask, startLoading, finishLoading } from '../redux/tasksSlice';
+import { useEffect, useState } from 'react';
 
 export default function TasksScreen() {
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
+  const isLoading = useSelector((state: RootState) => state.tasks.isLoading);
   const dispatch = useDispatch();
+
   const [modalVisible, setModalVisible] = useState(false);
   const [newTask, setNewTask] = useState('');
+
+  // Simula carga de tareas al montar el componente
+  useEffect(() => {
+    const fetchTasks = async () => {
+      dispatch(startLoading());
+
+      // Simulamos una carga real de datos desde API, etc.
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      dispatch(finishLoading());
+    };
+
+    fetchTasks();
+  }, [dispatch]);
 
   const handleAddTask = () => {
     if (!newTask.trim()) {
       Alert.alert('Error', 'La descripción no puede estar vacía');
       return;
     }
+
     dispatch(addTask(newTask));
     setNewTask('');
     setModalVisible(false);
@@ -23,6 +40,15 @@ export default function TasksScreen() {
   const handleRemoveTask = (id: string) => {
     dispatch(removeTask(id));
   };
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#007bff" />
+        <Text style={{ marginTop: 10 }}>Cargando tareas...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, padding: 20 }}>

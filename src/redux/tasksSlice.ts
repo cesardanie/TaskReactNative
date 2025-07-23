@@ -7,28 +7,36 @@ export interface Task {
 
 interface TasksState {
   tasks: Task[];
+  isLoading: boolean;
 }
 
 const initialState: TasksState = {
   tasks: [],
+  isLoading: false,
 };
 
-export const tasksSlice = createSlice({
+const tasksSlice = createSlice({
   name: 'tasks',
   initialState,
   reducers: {
-    addTask: (state, action: PayloadAction<string>) => {
-      const newTask: Task = {
+    startLoading(state) {
+      state.isLoading = true;
+    },
+    finishLoading(state) {
+      state.isLoading = false;
+    },
+    addTask(state, action: PayloadAction<string>) {
+      state.tasks.push({
         id: Date.now().toString(),
         description: action.payload,
-      };
-      state.tasks.push(newTask);
+      });
     },
-    removeTask: (state, action: PayloadAction<string>) => {
-      state.tasks = state.tasks.filter(task => task.id !== action.payload);
+    removeTask(state, action: PayloadAction<string>) {
+      state.tasks = state.tasks.filter((task) => task.id !== action.payload);
     },
   },
 });
 
-export const { addTask, removeTask } = tasksSlice.actions;
+export const { addTask, removeTask, startLoading, finishLoading } = tasksSlice.actions;
+
 export default tasksSlice.reducer;
